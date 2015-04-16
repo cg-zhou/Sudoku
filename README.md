@@ -1,2 +1,2 @@
 # Sudoku
-A program that resolve sudoku.
+计算数独结果
