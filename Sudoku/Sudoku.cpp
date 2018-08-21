@@ -1,109 +1,133 @@
 #include "Sudoku.h"
-#include <vector>
-#include <iostream>
-#include <algorithm>
-using namespace std;
 
-int Sudoku::m_num[81] = {0};
-int Sudoku::m_result[81] = {0};
-
-bool Sudoku::set(const vector<int>& num)
+Sudoku::Sudoku(const std::vector<int>& nums)
 {
-	if (num.size() != 81)
-		return false;
-
-	if (any_of(num.begin(), num.end(), [](const int& i){return i > 9 || i < 0;}))
-		return false;
-
-	for (int i = 0; i < 81; ++i)
+	if (nums.size() != 81)
 	{
-		m_num[i] = num[i];
-		m_result[i] = num[i];
+		Utils::Error("The length of sudoku is not 81.");
+		return;
 	}
 
-	return true;
-}
-
-bool Sudoku::calc()
-{
-	return calc(80) && isOK();
-}
-
-const vector<int> Sudoku::get()
-{
-	return vector<int>(m_num, m_num + sizeof(m_num) / sizeof(int));
-}
-
-const vector<int> Sudoku::getResult()
-{
-	return vector<int>(m_result, m_result + sizeof(m_result) / sizeof(int));
-}
-
-void Sudoku::show(const vector<int>& num)
-{
-	for (size_t i = 0; i < num.size(); ++i)
+	if (Utils::InRange(nums, 0, 9))
 	{
-		cout << num.at(i) << " ";
-		if (i % 9 == 8)
-			cout << endl;
+		Utils::Error("Valid Sudoku number range is 0 ~ 9(0's meaning is empty).");
+		return;
 	}
+
+	m_originNums = nums;
+	m_result = nums;
 }
 
-bool Sudoku::isOK(int index)
+bool Sudoku::Calculate()
+{
+	return Calculate(80) && IsValid();
+}
+
+bool Sudoku::IsValid(int index)
 {
 	int row = index / 9;
 	int col = index % 9;
 	int blockRow = row / 3 * 3;
 	int blockCol = col / 3 * 3;
-	int cmpIndex = 0;
 
+	int value = m_result[index];
 	for (int i = 0; i < 9; ++i)
 	{
-		cmpIndex = row * 9 + i;
-		if (cmpIndex != index && m_result[index] == m_result[cmpIndex])
+		// Compare by row
+		int cmpIndex = row * 9 + i;
+		if (cmpIndex != index && value == m_result[cmpIndex])
+		{
 			return false;
+		}
 
+		// Compare by column
 		cmpIndex = i * 9 + col;
-		if (cmpIndex != index && m_result[index] == m_result[cmpIndex])
+		if (cmpIndex != index && value == m_result[cmpIndex])
+		{
 			return false;
+		}
 
+		// Compare by 3*3 block
 		cmpIndex = (i / 3 * 9 + blockRow * 9) + (i % 3 + blockCol);
-		if (cmpIndex != index && m_result[index] == m_result[cmpIndex])
+		if (cmpIndex != index && value == m_result[cmpIndex])
+		{
 			return false;
+		}
 	}
 
 	return true;
 }
 
-bool Sudoku::isOK()
+bool Sudoku::IsValid()
 {
-	if (any_of(m_result, m_result + 81, [](const int& i){return i > 9 || i < 1;}))
+	if (Utils::InRange(m_result, 1, 9))
+	{
 		return false;
+	}
 
 	for (size_t index = 0; index < 81; ++index)
-		if (!isOK(index))
+	{
+		if (!IsValid(index))
+		{
 			return false;
+		}
+	}
 
 	return true;
 }
 
-bool Sudoku::calc(int index)
+bool Sudoku::Calculate(int index)
 {
-	while (index >= 0 && m_num[index] != 0)
+	while (index >= 0 && m_originNums[index] != 0)
+	{
 		--index;
+	}
 
 	if (index < 0)
+	{
 		return true;
+	}
 
 	//Try from 1~9.
 	for (int i = 1; i < 10; ++i)
 	{
 		m_result[index] = i;
-		if (isOK(index))
-			if (calc(index - 1))
-				return true;
+		if (IsValid(index) && Calculate(index - 1))
+		{
+			return true;
+		}
 	}
 
 	m_result[index] = 0;
 	return false;
+}
+
+void Sudoku::Show(const std::vector<int>& nums)
+{
+	for (size_t i = 0; i < nums.size(); ++i)
+	{
+		if (nums[i] == 0)
+		{
+			std::cout << "_ ";
+		}
+		else
+		{
+			std::cout << nums[i] << " ";
+		}
+
+		if (i % 3 == 2)
+		{
+			Utils::Print(" ");
+		}
+
+		if (i % 9 == 8)
+		{
+			Utils::PrintLine();
+		}
+
+		if (i % 27 == 26)
+		{
+			Utils::PrintLine();
+		}
+	}
 }
