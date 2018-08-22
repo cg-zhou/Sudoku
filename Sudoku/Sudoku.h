@@ -20,4 +20,6 @@ private:
 
 	std::vector<int> m_originNums;
 	std::vector<int> m_result;
+
+	static const unsigned int NUM_COUNT = 81;
 };

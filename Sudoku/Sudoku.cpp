@@ -2,9 +2,9 @@
 
 Sudoku::Sudoku(const std::vector<int>& nums)
 {
-	if (nums.size() != 81)
+	if (nums.size() != NUM_COUNT)
 	{
-		Utils::Error("The length of sudoku is not 81.");
+		Utils::Error("The length of sudoku is not " + NUM_COUNT + std::string("."));
 		return;
 	}
 
@@ -20,7 +20,7 @@ Sudoku::Sudoku(const std::vector<int>& nums)
 
 bool Sudoku::Calculate()
 {
-	return Calculate(80) && IsValid();
+	return Calculate(NUM_COUNT - 1) && IsValid();
 }
 
 bool Sudoku::IsValid(int index)
@@ -65,7 +65,7 @@ bool Sudoku::IsValid()
 		return false;
 	}
 
-	for (size_t index = 0; index < 81; ++index)
+	for (size_t index = 0; index < NUM_COUNT; ++index)
 	{
 		if (!IsValid(index))
 		{
