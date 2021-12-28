@@ -3,23 +3,23 @@
 class Sudoku
 {
 public:
-	Sudoku(const std::vector<int>& nums);
+    Sudoku(const std::vector<int>& nums);
 
-	bool Calculate();
+    bool Calculate();
 
-	void Show() { Show(m_originNums); };
-	void ShowResult() { Show(m_result); };
+    void Show() { Show(m_originNums); };
+    void ShowResult() { Show(m_result); };
 
 private:
-	bool Calculate(int index);
+    bool Calculate(int index);
 
-	void Show(const std::vector<int>& nums);
+    void Show(const std::vector<int>& nums);
 
-	bool IsValid();
-	bool IsValid(int index);
+    bool IsValid();
+    bool IsValid(int index);
 
-	std::vector<int> m_originNums;
-	std::vector<int> m_result;
+    std::vector<int> m_originNums;
+    std::vector<int> m_result;
 
-	static const unsigned int NUM_COUNT = 81;
+    static const unsigned int NUM_COUNT = 81;
 };
